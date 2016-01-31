@@ -1,10 +1,10 @@
 //Using SDL, SDL_image, standard IO, and, strings
+#include "XManagers.h"
 #include <SDL.h>
 #include <string>
 #include <SDL_image.h>
 #include <stdio.h>
 #include <SDL_ttf.h>
-#include "InputManager.h"
 
 
 //Screen dimension constants
@@ -23,6 +23,31 @@ SDL_Event *e;
 
 TTF_Font *gFont = NULL;
 
+XManagers gManagerWrapper;
+
+bool Init()
+{
+	SDL_Init(SDL_INIT_VIDEO);
+	TTF_Init();
+	gManagerWrapper.CreateManagers();
+	e = new SDL_Event();
+	
+	gTextureManager->SetRenderer(gRenderer);
+
+	gFont = TTF_OpenFont("arial.ttf", 22);
+	if (gFont == NULL)
+	{
+		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+		return false;
+	}
+
+	gWindow = SDL_CreateWindow("Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
+
+	gRenderer = SDL_CreateRenderer(gWindow,
+		-1,
+		SDL_RENDERER_ACCELERATED);
+	return true;
+}
 
 bool Update()
 {
@@ -76,38 +101,25 @@ void Free()
 
 	SDL_DestroyRenderer(gRenderer);
 	TTF_CloseFont(gFont);
+	gManagerWrapper.FreeManagers();
+	TTF_Quit();
+	SDL_Quit();
 }
 
 int main(int argc, char* args[])
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	TTF_Init();
 
-	e = new SDL_Event();
-	
-
-	gFont = TTF_OpenFont("arial.ttf",12);
-	if (gFont == NULL)
+	if (!Init())
 	{
-		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 		return 1;
 	}
-
-	gWindow = SDL_CreateWindow("Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, NULL);
-	
-	gRenderer = SDL_CreateRenderer(gWindow,
-		-1,
-		SDL_RENDERER_ACCELERATED);
 
 	while (Update())
 	{
 		Draw();
 	}
 
-	TTF_Quit();
-	SDL_Quit();
-
-
+	Free();
 
 	return 0;
 }

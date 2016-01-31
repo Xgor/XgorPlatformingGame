@@ -10,4 +10,3 @@ public:
 
 
 };
-extern class InputManager* gInputManager;

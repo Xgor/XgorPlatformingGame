@@ -1,11 +1,9 @@
 #include "InputManager.h"
 
-InputManager* gInputManager = NULL;
 
 InputManager::InputManager()
 {
 
-	gInputManager = this;
 }
 
 
