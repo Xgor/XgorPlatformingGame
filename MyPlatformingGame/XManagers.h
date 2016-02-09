@@ -9,6 +9,9 @@ public:
 
 	void CreateManagers();
 	void FreeManagers();
+
 };
 extern class InputManager* gInputManager;
 extern class TextureManager* gTextureManager;
+extern class SDL_Window *gWindow;
+extern class SDL_Renderer *gRenderer;	
